@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">No data available</title>
+  <circle cx="12" cy="12" r="12" fill="#64748B"/>
+  <path d="M7.5 12h9" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-width="2"/>
+</svg>

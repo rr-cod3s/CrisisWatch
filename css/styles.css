@@ -1,0 +1,430 @@
+@font-face {
+    font-family: "Figtree";
+    src: url("../fonts/Figtree-VariableFont_wght.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Figtree", Arial, sans-serif;
+    background-color: #F8FAFC;
+}
+
+p,
+h1,
+h2 {
+    margin: 0;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+main {
+    padding: 16px;
+}
+
+table {
+    min-width: 600px;
+}
+
+tr {
+    border-bottom: solid 1px #E2E8F0;
+}
+
+tr th {
+    font-size: 20px;
+    border-bottom: solid 2px #E2E8F0;
+    border-spacing: 0;
+    padding: 4px 12px;
+}
+
+tr td {
+    font-size: 18px;
+}
+
+td {
+    border-bottom: solid 1px #E2E8F0;
+    border-spacing: 0;
+    padding: 4px 12px;
+}
+
+th {
+    font-size: 12px;
+    font-weight: 400;
+    text-align: start;
+}
+
+.tableHeader {
+    padding: 8px;
+    margin-bottom: 16px;
+}
+
+
+.head-container {
+    background-color: #FFF;
+    border-bottom: solid 1px #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+}
+
+.head-container h1 {
+    font-size: 16px;
+}
+
+
+.head-subcontainer {
+    gap: 16px;
+}
+
+.service-header {
+    margin: 20px 0 40px 0;
+}
+
+.service-header h2 {
+    font-size: 24px;
+}
+
+.service-subheader {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.service-subheader img {
+    height: 30px;
+}
+
+.service-text {
+    font-size: 20px;
+}
+
+.systemHealth-text {
+    font-size: 15px;
+    opacity: 60%;
+}
+
+
+
+
+
+
+
+.overlay-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.cards {
+    display: flex;
+    border: solid 1px #E2E8F0;
+    border-radius: 10px;
+    justify-content: start;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 16px;
+    background-color: #FFFFFF;
+}
+
+.cards img {
+    height: 50px;
+}
+
+.cardText p {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.cardText span {
+    opacity: 60%;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.green {
+    color: #0F766E;
+}
+
+.orange {
+    color: #B45309;
+}
+
+.red {
+    color: #B42318;
+}
+
+.search-area {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    margin: 20px 0;
+    gap: 24px;
+}
+
+#searchInput {
+    width: 100%;
+    font-size: 16px;
+    border-radius: 10px;
+    border: solid 1px #E2E8F0;
+    background-color: #FFFFFF;
+    height: 48px;
+    padding-left: 16px;
+}
+
+.segment-area {
+    border: solid 1px #E2E8F0;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    height: 48px;
+}
+
+.segment {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+
+.segment img {
+    height: 18px;
+    margin-left: 8px;
+    display: none;
+}
+
+.segment+.segment {
+    border-left: 1px solid #E2E8F0;
+}
+
+.segment input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.segment input:checked+.segment-content {
+    background-color: #F1F5F9;
+    font-weight: 600;
+}
+
+.segment input:focus-visible+.segment-content {
+    outline: 3px solid #84adff;
+    outline-offset: -3px;
+}
+
+.segment-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+    font-size: 12px;
+}
+
+.overviewTable {
+    width: 100%;
+    border: solid 1px #E2E8F0;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.overflow {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.subcontainer-one {
+    display: none;
+}
+
+.lastUpdateText {
+    opacity: 60%;
+    font-size: 15px;
+}
+
+.performance {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.performance::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--dot-color);
+    flex: 0 0 10px;
+}
+
+.performance--fast {
+    --dot-color: #0F766E;
+}
+
+.performance--moderate {
+    --dot-color: #B45309;
+}
+
+.performance--slow {
+    --dot-color: #B42318;
+}
+
+.performance--unavailable {
+    --dot-color: #B42318;
+}
+
+.performance--no-data {
+    --dot-color: #64748B;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status img {
+    width: 18px;
+    height: 18px;
+}
+
+.status--operational {
+    color: #0F766E;
+}
+
+.status--degraded {
+    color: #B45309;
+}
+
+.status--outage {
+    color: #B42318;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.loading-state {
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: solid 1px #E2E8F0;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    color: #64748B;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: solid 2px #E2E8F0;
+    border-top-color: #0F766E;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.tryAgainBtn {
+    width: 90px;
+    height: 35px;
+    border: solid 1px #E2E8F0;
+    border-radius: 10px;
+    background-color: #fa8b37;
+    font-size: 16px;
+}
+
+.tryAgainBtn:active {
+    background-color: #c6661d;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (min-width: 425px) {
+    .overlay-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .segment-content img {
+        display: flex;
+    }
+
+    .head-subcontainer {
+        display: flex;
+    }
+
+    .subcontainer-one {
+        display: flex;
+    }
+}
+
+@media (min-width: 790px) {
+    .overlay-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .search-area {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .segment-content img {
+        height: 20px;
+    }
+
+    .cardText span {
+        font-size: 14px;
+    }
+
+    .cardText p {
+        font-size: 18px;
+    }
+
+    th {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1100px) {
+    .cardText span {
+        font-size: 18px;
+    }
+
+    .cardText p {
+        font-size: 22px;
+    }
+
+    .segment-content {
+        font-size: 15px;
+    }
+
+    th {
+        font-size: 16px;
+    }
+}

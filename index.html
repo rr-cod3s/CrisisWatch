@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <meta name="description" content="coming soon.." />
+    <title>CRISISWATCH</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="head-container">
+        <h1>CRISISWATCH</h1>
+        <div class="head-subcontainer">
+          <p class="subcontainer-one">Production</p>
+          <p class="lastUpdateText">Last updated: 01. Septembre</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div>
+        <div class="service-header">
+          <h2>Service Status</h2>
+          <div class="service-subheader">
+            <img src="./images/system-no-data.svg" alt="" id="statusImage" />
+            <div>
+              <p class="service-text" id="serviceText"></p>
+              <p class="systemHealth-text" id="systemText"></p>
+            </div>
+          </div>
+        </div>
+        <div class="overlay-grid">
+          <div class="cards">
+            <img src="./images/all-services.svg" alt="" />
+            <div class="cardText">
+              <span>All Services</span>
+              <p id="totalServices"></p>
+            </div>
+          </div>
+
+          <div class="cards">
+            <img src="./images/operational.svg" alt="" />
+            <div class="cardText green">
+              <span>Operational</span>
+              <p id="operationalServices"></p>
+            </div>
+          </div>
+
+          <div class="cards">
+            <img src="./images/degraded.svg" alt="" />
+            <div class="cardText orange">
+              <span>Degraded</span>
+              <p id="degradedServices"></p>
+            </div>
+          </div>
+
+          <div class="cards">
+            <img src="./images/outage.svg" alt="" />
+            <div class="cardText red">
+              <span>Outage</span>
+              <p id="outageServices"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="search-area">
+        <div>
+          <label for="searchInput" class="sr-only">Search</label>
+          <input type="text" id="searchInput" placeholder="Search services" class="search-input" />
+        </div>
+        <div class="segment-area">
+          <label class="segment">
+            <input type="radio" name="status" value="all" checked />
+            <span class="segment-content">all</span>
+          </label>
+          <label class="segment">
+            <input type="radio" name="status" value="operational" />
+            <span class="segment-content"><img src="./images/operational.svg" alt="" />operational </span>
+          </label>
+          <label class="segment">
+            <input type="radio" name="status" value="degraded" />
+            <span class="segment-content"><img src="./images/degraded.svg" alt="" />degraded </span>
+          </label>
+          <label class="segment">
+            <input type="radio" name="status" value="outage" />
+            <span class="segment-content"><img src="./images/outage.svg" alt="" />outage </span>
+          </label>
+        </div>
+      </div>
+
+      <div id="loadingState" class="loading-state" role="status" aria-live="polite" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Loading services...</p>
+      </div>
+
+      <div id="errorState" class="loading-state" role="status" aria-live="polite" hidden>
+        <span aria-hidden="true"></span>
+        <p>An Error ocurred. Try again..</p>
+        <button type="button" class="tryAgainBtn" id="tryAgainButton">Try again</button>
+      </div>
+
+      <div id="tableWrapper" class="overflow">
+        <table id="overviewTable" class="overviewTable">
+          <thead>
+            <tr class="tableHeader">
+              <th scope="col">Service</th>
+              <th scope="col">Status</th>
+              <th scope="col">Response Time</th>
+              <th scope="col">Performance</th>
+              <th scope="col">Last Checked</th>
+            </tr>
+          </thead>
+          <tbody id="serviceTable"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

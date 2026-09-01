@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title id="title">Outage</title>
+  <circle cx="24" cy="24" r="24" fill="#FDECEC"/>
+  <circle cx="24" cy="24" r="11" fill="none" stroke="#E53935" stroke-width="2.25"/>
+  <path d="m20 20 8 8m0-8-8 8" fill="none" stroke="#E53935" stroke-linecap="round" stroke-width="2.25"/>
+</svg>

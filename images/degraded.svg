@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title id="title">Degraded</title>
+  <circle cx="24" cy="24" r="24" fill="#FFF4E5"/>
+  <path d="M24 13 36 35H12L24 13Z" fill="none" stroke="#E58400" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25"/>
+  <path d="M24 21v7" fill="none" stroke="#E58400" stroke-linecap="round" stroke-width="2.25"/>
+  <circle cx="24" cy="31.5" r="1.35" fill="#E58400"/>
+</svg>

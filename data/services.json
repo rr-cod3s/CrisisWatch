@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "name": "Payment API",
+    "status": "degraded",
+    "responseTime": 742,
+    "lastChecked": "2026-08-30T12:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "User Authentication",
+    "status": "operational",
+    "responseTime": 118,
+    "lastChecked": "2026-08-30T12:31:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Inventory Service",
+    "status": "operational",
+    "responseTime": 186,
+    "lastChecked": "2026-08-30T12:29:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Order Processing API",
+    "status": "degraded",
+    "responseTime": 433,
+    "lastChecked": "2026-08-30T12:28:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Notification Gateway",
+    "status": "outage",
+    "responseTime": null,
+    "lastChecked": "2026-08-30T12:25:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Search API",
+    "status": "operational",
+    "responseTime": 94,
+    "lastChecked": "2026-08-30T12:32:00Z"
+  },
+  {
+    "id": 7,
+    "name": "Analytics Pipeline",
+    "status": "degraded",
+    "responseTime": 528,
+    "lastChecked": "2026-08-30T12:27:00Z"
+  },
+  {
+    "id": 8,
+    "name": "File Storage Service",
+    "status": "operational",
+    "responseTime": 265,
+    "lastChecked": "2026-08-30T12:30:00Z"
+  },
+  {
+    "id": 9,
+    "name": "Billing Service",
+    "status": "outage",
+    "responseTime": null,
+    "lastChecked": "2026-08-30T12:20:00Z"
+  },
+  {
+    "id": 10,
+    "name": "Customer Support Portal",
+    "status": "degraded",
+    "responseTime": 349,
+    "lastChecked": "2026-08-30T12:26:00Z"
+  },
+  {
+    "id": 11,
+    "name": "Reporting API",
+    "status": "operational",
+    "responseTime": 154,
+    "lastChecked": "2026-08-30T12:33:00Z"
+  },
+  {
+    "id": 12,
+    "name": "Webhook Dispatcher",
+    "status": "degraded",
+    "responseTime": 611,
+    "lastChecked": "2026-08-30T12:24:00Z"
+  }
+]
