@@ -4,11 +4,17 @@ CrisisWatch is a responsive service-status dashboard built with vanilla JavaScri
 
 It loads local sample data with the Fetch API, validates the response before rendering, and presents the resulting system state through summary cards and a searchable, filterable service table.
 
+## Live Demo
+
+[Open CrisisWatch](https://rr-cod3s.github.io/CrisisWatch/)
+
+## Preview
+
+![Desktop overview of the CrisisWatch dashboard](./images/CrisisWatch_Overview.png)
+
 ## Project Status
 
-Version 1 is feature-complete locally. It uses local sample JSON data from `data/services.json`; it is not connected to an external monitoring API and has not been deployed yet.
-
-Deployment, a live link, and a project screenshot are the remaining release steps.
+Version 1 is deployed on GitHub Pages and uses local sample JSON data from `data/services.json`.
 
 ## Features
 
@@ -107,8 +113,6 @@ The solution is the central `filterServices()` function. It receives the source 
 
 ## Future Improvements
 
-- Deploy the project and add a live demo link
-- Add a screenshot to this README
 - Add automated tests for filtering and data validation
 - Connect a real external API
 - Add automatic refreshes and request cancellation
