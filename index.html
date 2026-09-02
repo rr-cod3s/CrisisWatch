@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/styles.css" />
-    <meta name="description" content="coming soon.." />
+    <meta name="description" content="CrisisWatch demonstrates asynchronous data loading, validation, error handling, and responsive UI rendering with vanilla JavaScript." />
     <title>CRISISWATCH</title>
   </head>
 
@@ -13,8 +13,8 @@
       <div class="head-container">
         <h1>CRISISWATCH</h1>
         <div class="head-subcontainer">
-          <p class="subcontainer-one">Production</p>
-          <p class="lastUpdateText">Last updated: 01. Septembre</p>
+          <p class="subcontainer-one"></p>
+          <p class="lastUpdateText" id="latestUpdateNote">Last updated: --</p>
         </div>
       </div>
     </header>
@@ -68,9 +68,10 @@
       <div class="search-area">
         <div>
           <label for="searchInput" class="sr-only">Search</label>
-          <input type="text" id="searchInput" placeholder="Search services" class="search-input" />
+          <input type="text" id="searchInput" placeholder="Search services" />
         </div>
-        <div class="segment-area">
+        <fieldset class="segment-area">
+          <legend class="sr-only">Filter by Status</legend>
           <label class="segment">
             <input type="radio" name="status" value="all" checked />
             <span class="segment-content">all</span>
@@ -87,7 +88,7 @@
             <input type="radio" name="status" value="outage" />
             <span class="segment-content"><img src="./images/outage.svg" alt="" />outage </span>
           </label>
-        </div>
+        </fieldset>
       </div>
 
       <div id="loadingState" class="loading-state" role="status" aria-live="polite" hidden>
@@ -95,16 +96,24 @@
         <p>Loading services...</p>
       </div>
 
-      <div id="errorState" class="loading-state" role="status" aria-live="polite" hidden>
+      <div id="errorState" class="loading-state" role="alert" hidden>
         <span aria-hidden="true"></span>
-        <p>An Error ocurred. Try again..</p>
+        <p>An error occurred. Try again.</p>
         <button type="button" class="tryAgainBtn" id="tryAgainButton">Try again</button>
       </div>
 
-      <div id="tableWrapper" class="overflow">
+      <div id="searchResults" class="search-result-state" aria-live="polite" hidden>
+        <span aria-hidden="true"></span>
+        <p id="searchResultMessage"></p>
+      </div>
+
+      <div id="tableWrapper" class="overflow" tabindex="0" role="region" aria-label="Service overview">
         <table id="overviewTable" class="overviewTable">
+          <caption class="sr-only">
+            Service overview Table
+          </caption>
           <thead>
-            <tr class="tableHeader">
+            <tr>
               <th scope="col">Service</th>
               <th scope="col">Status</th>
               <th scope="col">Response Time</th>

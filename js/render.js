@@ -10,22 +10,43 @@ export function renderOverviewCards(stats) {
 
 export function showLoading() {
   document.getElementById("loadingState").hidden = false;
+  document.getElementById("errorState").hidden = true;
   document.getElementById("tableWrapper").hidden = true;
-}
-
-export function hideLoading() {
-  document.getElementById("loadingState").hidden = true;
-  document.getElementById("tableWrapper").hidden = false;
+  document.getElementById("searchResults").hidden = true;
 }
 
 export function showError() {
+  document.getElementById("loadingState").hidden = true;
   document.getElementById("errorState").hidden = false;
   document.getElementById("tableWrapper").hidden = true;
+  document.getElementById("searchResults").hidden = true;
 }
 
-export function hideError() {
+export function showTable() {
+  document.getElementById("loadingState").hidden = true;
   document.getElementById("errorState").hidden = true;
   document.getElementById("tableWrapper").hidden = false;
+}
+
+export function renderLastUpdated(services) {
+  const latestUpdateNote = document.getElementById("latestUpdateNote");
+
+  if (!services || services.length === 0) {
+    latestUpdateNote.textContent = "Last Updated: No data";
+    return;
+  }
+
+  const latest = services.reduce((max, service) => {
+    return new Date(service.lastChecked) > new Date(max.lastChecked) ? service : max;
+  });
+
+  const date = new Date(latest.lastChecked);
+  const formatDate = Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+
+  latestUpdateNote.textContent = `Last Updated: ${formatDate}`;
 }
 
 function getPerformanceDetails(service) {
@@ -64,7 +85,7 @@ function getStatusDetails(service) {
       icon: "./images/operational.svg",
     };
   }
-   if (service.status === "degraded") {
+  if (service.status === "degraded") {
     return {
       label: "Degraded",
       type: "degraded",
@@ -75,43 +96,75 @@ function getStatusDetails(service) {
     label: "Outage",
     type: "outage",
     icon: "./images/outage.svg",
-  }    
+  };
+}
+
+export function renderSearchResultMessage(count, totalCount) {
+  const searchResults = document.getElementById("searchResults");
+  const message = document.getElementById("searchResultMessage");
+
+  searchResults.hidden = false;
+
+  if (totalCount === 0) {
+    message.textContent = "No services are available.";
+  } else if (count === 0) {
+    message.textContent = "No services match the current filters.";
+  } else {
+    message.textContent = `${count} services shown`;
+  }
 }
 
 const serviceTable = document.getElementById("serviceTable");
 
 export function renderServiceTable(services) {
-      services.forEach((service) => {
-      const newTableRow = document.createElement("tr");
-      const newService = document.createElement("td");
-      const newStatus = document.createElement("td");
-      const newResponseTime = document.createElement("td");
-      const newPerformance = document.createElement("td");
-      const newLastChecked = document.createElement("td");
+  serviceTable.replaceChildren();
 
-      const performanceDetails = getPerformanceDetails(service);
+  if (services.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
 
-      const performanceSpan = document.createElement("span");
-      performanceSpan.classList.add("performance", `performance--${performanceDetails.type}`);
-      performanceSpan.textContent = performanceDetails.label;
-      newPerformance.appendChild(performanceSpan);
+    cell.colSpan = 5;
+    cell.textContent = "No services found.";
 
-      const statusDetails = getStatusDetails(service);
-      const statusContent = document.createElement("span");
-      const statusIcon = document.createElement("img");
-      statusContent.classList.add("status", `status--${statusDetails.type}`);
-      statusIcon.src = statusDetails.icon;
-      statusIcon.alt = "";
-      statusContent.append(statusIcon, statusDetails.label);
-      newStatus.append(statusContent);
+    row.append(cell);
+    serviceTable.append(row);
+    return;
+  }
 
-      responseTimeHandle(service, newResponseTime);
-      newService.textContent = service.name;
-      getPerformanceDetails(service);
+  services.forEach((service) => {
+    const newTableRow = document.createElement("tr");
+    const newService = document.createElement("td");
+    const newStatus = document.createElement("td");
+    const newResponseTime = document.createElement("td");
+    const newPerformance = document.createElement("td");
+    const newLastChecked = document.createElement("td");
 
-      newLastChecked.textContent = service.lastChecked;
-      newTableRow.append(newService, newStatus, newResponseTime, newPerformance, newLastChecked);
-      serviceTable.append(newTableRow);
-    });
+    const performanceDetails = getPerformanceDetails(service);
+
+    const performanceSpan = document.createElement("span");
+    performanceSpan.classList.add("performance", `performance--${performanceDetails.type}`);
+    performanceSpan.textContent = performanceDetails.label;
+    newPerformance.appendChild(performanceSpan);
+    const statusDetails = getStatusDetails(service);
+    const statusContent = document.createElement("span");
+    const statusIcon = document.createElement("img");
+    statusContent.classList.add("status", `status--${statusDetails.type}`);
+    statusIcon.src = statusDetails.icon;
+    statusIcon.alt = "";
+    statusContent.append(statusIcon, statusDetails.label);
+    newStatus.append(statusContent);
+
+    responseTimeHandle(service, newResponseTime);
+
+    const date = new Date(service.lastChecked);
+    const formatDate = Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium",
+      timeStyle: "medium",
+    }).format(date);
+    newService.textContent = service.name;
+
+    newLastChecked.textContent = formatDate;
+    newTableRow.append(newService, newStatus, newResponseTime, newPerformance, newLastChecked);
+    serviceTable.append(newTableRow);
+  });
 }
-

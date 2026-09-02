@@ -1,13 +1,23 @@
 import { fetchServices } from "./api.js";
-import { renderOverviewCards } from "./render.js";
-import { showLoading, hideLoading, renderServiceTable, showError, hideError } from "./render.js";
+import { renderOverviewCards, showLoading, showError, renderServiceTable, showTable, renderSearchResultMessage, renderLastUpdated } from "./render.js";
+import { filterServices } from "./filters.js";
+
+let allServices = [];
+let searchTerm = "";
+let selectedStatus = "all";
+
+const tryAgainButton = document.getElementById("tryAgainButton");
+
+tryAgainButton.addEventListener("click", init);
+
+init();
 
 async function init() {
-  hideError();
   showLoading();
 
   try {
-    const services = await fetchServices();
+    allServices = await fetchServices();
+    const services = allServices;
 
     const stats = {
       total: services.length,
@@ -17,6 +27,7 @@ async function init() {
     };
     renderOverviewCards(stats);
 
+    renderLastUpdated(services);
 
     const systemText = document.getElementById("systemText");
     const serviceText = document.getElementById("serviceText");
@@ -28,7 +39,7 @@ async function init() {
       statusImage.src = "./images/system-critical.svg";
     } else if (stats.degraded > 0 && stats.outage === 0) {
       serviceText.textContent = `${stats.degraded} Services are degraded.`;
-      systemText.textContent = "Overall system health is ok";
+      systemText.textContent = "Overall system health is degraded";
       statusImage.src = "./images/system-degraded.svg";
     } else if (stats.total <= 0) {
       serviceText.textContent = "No Data found.";
@@ -40,20 +51,31 @@ async function init() {
       statusImage.src = "./images/system-operational.svg";
     }
 
-    renderServiceTable(services);
-
-  } catch (err) {
-    console.log(err);
+    updateView();
+    showTable();
+  } catch (error) {
+    console.error(error);
     showError();
-
-  } finally {
-    hideLoading();
   }
 }
-init();
 
-const tryAgainButton = document.getElementById("tryAgainButton");
-tryAgainButton.addEventListener("click", function retryFetchData() {
-  init();
-  showLoading()
-})
+function updateView() {
+  const filteredServices = filterServices(allServices, searchTerm, selectedStatus);
+
+  renderSearchResultMessage(filteredServices.length, allServices.length);
+  renderServiceTable(filteredServices);
+}
+
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("input", (event) => {
+  searchTerm = event.target.value;
+  updateView();
+});
+
+document.querySelectorAll('input[name="status"]').forEach((radio) => {
+  radio.addEventListener("change", (event) => {
+    selectedStatus = event.target.value;
+    updateView();
+  });
+});
