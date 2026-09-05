@@ -8,45 +8,67 @@ export function renderOverviewCards(stats) {
   document.getElementById("outageServices").textContent = stats.outage;
 }
 
-export function showLoading() {
-  document.getElementById("loadingState").hidden = false;
-  document.getElementById("errorState").hidden = true;
-  document.getElementById("tableWrapper").hidden = true;
-  document.getElementById("searchResults").hidden = true;
+export function renderDemoBanner(demoScenario) {
+  const demoBanner = document.getElementById("demoBanner");
+  const demoScenarioLabel = document.getElementById("demoScenarioLabel");
+
+  const isDemoMode = demoScenario !== null;
+  demoBanner.hidden = !isDemoMode;
+
+  if (isDemoMode) {
+    demoScenarioLabel.textContent = demoScenario;
+  }
 }
 
-export function showError() {
-  document.getElementById("loadingState").hidden = true;
-  document.getElementById("errorState").hidden = false;
-  document.getElementById("tableWrapper").hidden = true;
-  document.getElementById("searchResults").hidden = true;
-}
+export function renderSystemHealth(health, stats) {
+  const systemText = document.getElementById("systemText");
+  const serviceText = document.getElementById("serviceText");
+  const statusImage = document.getElementById("statusImage");
 
-export function showTable() {
-  document.getElementById("loadingState").hidden = true;
-  document.getElementById("errorState").hidden = true;
-  document.getElementById("tableWrapper").hidden = false;
-}
-
-export function renderLastUpdated(services) {
-  const latestUpdateNote = document.getElementById("latestUpdateNote");
-
-  if (!services || services.length === 0) {
-    latestUpdateNote.textContent = "Last Updated: No data";
+  if (health === "critical") {
+    serviceText.textContent = `${stats.outage} Services are unavailable.`;
+    systemText.textContent = "Overall system health is Critical";
+    statusImage.src = "./images/system-critical.svg";
+    return;
+  }
+  if (health === "degraded") {
+    serviceText.textContent = `${stats.degraded} Services are degraded.`;
+    systemText.textContent = "Overall system health is degraded";
+    statusImage.src = "./images/system-degraded.svg";
+    return;
+  }
+  if (health === "no-data") {
+    serviceText.textContent = "No Data found.";
+    systemText.textContent = "No Data";
+    statusImage.src = "./images/system-no-data.svg";
     return;
   }
 
-  const latest = services.reduce((max, service) => {
-    return new Date(service.lastChecked) > new Date(max.lastChecked) ? service : max;
-  });
+    serviceText.textContent = "All systems operational.";
+    systemText.textContent = "Overall system health is good.";
+    statusImage.src = "./images/system-operational.svg";
+}
 
-  const date = new Date(latest.lastChecked);
-  const formatDate = Intl.DateTimeFormat("en-US", {
+export function renderFetchedAt(fetchedAt) {
+  const fetchedAtTime = document.getElementById("fetchedAtTime");
+
+  if (!fetchedAtTime) {
+    return;
+  }
+
+  if (!fetchedAt) {
+    fetchedAtTime.textContent = "--";
+    fetchedAtTime.removeAttribute("datetime");
+    return;
+  }
+
+  const formattedDate = Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+    timeStyle: "medium",
+  }).format(new Date(fetchedAt));
 
-  latestUpdateNote.textContent = `Last Updated: ${formatDate}`;
+  fetchedAtTime.dateTime = fetchedAt;
+  fetchedAtTime.textContent = formattedDate;
 }
 
 function getPerformanceDetails(service) {
@@ -100,10 +122,8 @@ function getStatusDetails(service) {
 }
 
 export function renderSearchResultMessage(count, totalCount) {
-  const searchResults = document.getElementById("searchResults");
   const message = document.getElementById("searchResultMessage");
 
-  searchResults.hidden = false;
 
   if (totalCount === 0) {
     message.textContent = "No services are available.";
@@ -167,4 +187,49 @@ export function renderServiceTable(services) {
     newTableRow.append(newService, newStatus, newResponseTime, newPerformance, newLastChecked);
     serviceTable.append(newTableRow);
   });
+}
+
+let refreshStatusTimeoutId = null;
+
+export function showRefreshStatus(message, dismissAfter = null) {
+  const refreshStatus = document.getElementById("refreshStatus");
+
+  window.clearTimeout(refreshStatusTimeoutId);
+
+  refreshStatus.textContent = message;
+  refreshStatus.hidden = false;
+
+  if (dismissAfter !== null) {
+    refreshStatusTimeoutId = window.setTimeout(() => {
+      refreshStatus.hidden = true;
+      refreshStatus.textContent = "";
+    }, dismissAfter);
+  }
+}
+
+export function renderRequestState(requestStatus) {
+  const loadingState = document.getElementById("loadingState");
+  const errorState = document.getElementById("errorState");
+  const tableWrapper = document.getElementById("tableWrapper");
+  const searchResults = document.getElementById("searchResults");
+
+  const isLoading = requestStatus === "loading";
+  const hasError = requestStatus === "error";
+  const hasLoaded = requestStatus === "success";
+
+  loadingState.hidden = !isLoading;
+  errorState.hidden = !hasError;
+  tableWrapper.hidden = !hasLoaded;
+  searchResults.hidden = !hasLoaded;
+}
+
+export function renderRefreshButtonState(requestStatus, isRefreshing) {
+  const refreshButton = document.getElementById("refreshButton");
+
+  const shouldBeDisabled = requestStatus !== "success" || isRefreshing;
+
+  refreshButton.disabled = shouldBeDisabled;
+  refreshButton.setAttribute("aria-busy", String(isRefreshing));
+
+  refreshButton.textContent = isRefreshing ? "Refreshing..." : "Refresh Services";
 }

@@ -1,81 +1,172 @@
-import { fetchServices } from "./api.js";
-import { renderOverviewCards, showLoading, showError, renderServiceTable, showTable, renderSearchResultMessage, renderLastUpdated } from "./render.js";
+import { fetchServices, fetchDemoServices } from "./api.js";
 import { filterServices } from "./filters.js";
+import { renderOverviewCards,
+  renderSystemHealth,
+  renderServiceTable,
+  renderSearchResultMessage,
+  renderFetchedAt,
+  showRefreshStatus,
+  renderRequestState,
+  renderRefreshButtonState,
+  renderDemoBanner } from "./render.js";
 
-let allServices = [];
-let searchTerm = "";
-let selectedStatus = "all";
 
-const tryAgainButton = document.getElementById("tryAgainButton");
+  const allowedDemoScenarios = new Set([
+    "operational",
+    "degraded",
+    "critical",
+    "empty",
+    "error",
+  ]
+);
 
-tryAgainButton.addEventListener("click", init);
+function getDemoScenario() {
+  const searchParams = new URLSearchParams(window.location.search);
 
-init();
+const requestedScenario = searchParams.get("demo");
 
-async function init() {
-  showLoading();
+return allowedDemoScenarios.has(requestedScenario) ? requestedScenario : null;
+}
+
+
+let activeController = null;
+
+const state = {
+allServices: [],
+requestStatus: "idle",
+isRefreshing: false,
+searchTerm: "",
+selectedStatus: "all",
+fetchedAt: null,
+error: null,
+demoScenario: getDemoScenario(),
+}
+
+function setState(patch) {
+  Object.assign(state, patch);
+  renderApp(state);
+}
+
+function renderApp(state) {
+
+  renderRequestState(state.requestStatus);
+  renderRefreshButtonState(state.requestStatus, state.isRefreshing);
+  renderFetchedAt(state.fetchedAt);
+  renderDemoBanner(state.demoScenario);
+
+  if (state.requestStatus !== "success") {
+    return;
+  }
+
+  const stats = getStats(state.allServices);
+  const health = getSystemHealth(stats);
+
+  const filteredServices = filterServices(state.allServices, state.searchTerm, state.selectedStatus);
+
+  renderOverviewCards(stats);
+  renderSystemHealth(health, stats);
+  renderSearchResultMessage(filteredServices.length, state.allServices.length);
+  renderServiceTable(filteredServices);
+
+}
+
+function getStats(services) {
+    return {
+    total: services.length,
+    operational: services.filter((service) => service.status === "operational").length,
+    degraded: services.filter((service) => service.status === "degraded").length,
+    outage: services.filter((service) => service.status === "outage").length,
+  };
+}
+
+function getSystemHealth(stats) {
+  if (stats.outage > 0) return "critical";
+  if (stats.degraded > 0) return "degraded";
+  if (stats.total === 0) return "no-data";
+  return "operational";
+}
+
+async function loadServices({ isInitialLoad = false } = {}) {
+  activeController?.abort();
+
+  const controller = new AbortController();
+    activeController = controller;
+
+
+    let didTimeout = false;
+    const timeoutID = window.setTimeout(()=> {
+    controller.abort();
+    didTimeout = true;
+    }, 10_000);
+
+  if (isInitialLoad) {
+    setState({ requestStatus: "loading" });
+  } else {
+    setState({ isRefreshing: true });
+    showRefreshStatus("Refreshing services..");
+  }
 
   try {
-    allServices = await fetchServices();
-    const services = allServices;
+    const services = state.demoScenario
+     ? await fetchDemoServices(state.demoScenario, { signal: controller.signal })
+     : await fetchServices({ signal: controller.signal });
 
-    const stats = {
-      total: services.length,
-      operational: services.filter((service) => service.status === "operational").length,
-      degraded: services.filter((service) => service.status === "degraded").length,
-      outage: services.filter((service) => service.status === "outage").length,
-    };
-    renderOverviewCards(stats);
+    setState({
+      allServices: services,
+      requestStatus: "success",
+      isRefreshing: false,
+      fetchedAt: new Date().toISOString(),
+    });
 
-    renderLastUpdated(services);
+    if (!isInitialLoad) {
+      showRefreshStatus("Services refreshed just now", 3000);
+    }
+  } catch (error) {
 
-    const systemText = document.getElementById("systemText");
-    const serviceText = document.getElementById("serviceText");
-    const statusImage = document.getElementById("statusImage");
-
-    if (stats.outage > 0) {
-      serviceText.textContent = `${stats.outage} Services are unavailable.`;
-      systemText.textContent = "Overall system health is Critical";
-      statusImage.src = "./images/system-critical.svg";
-    } else if (stats.degraded > 0 && stats.outage === 0) {
-      serviceText.textContent = `${stats.degraded} Services are degraded.`;
-      systemText.textContent = "Overall system health is degraded";
-      statusImage.src = "./images/system-degraded.svg";
-    } else if (stats.total <= 0) {
-      serviceText.textContent = "No Data found.";
-      systemText.textContent = "No Data";
-      statusImage.src = "./images/system-no-data.svg";
-    } else {
-      serviceText.textContent = "All systems operational.";
-      systemText.textContent = "Overall system health is good.";
-      statusImage.src = "./images/system-operational.svg";
+    if (error.name === "AbortError" && !didTimeout) {
+      return;
     }
 
-    updateView();
-    showTable();
-  } catch (error) {
     console.error(error);
-    showError();
+
+      let message = didTimeout ?
+      "Request timed out Showing last successful data." :
+      "Could not refresh. Showing last successful data.";
+
+    if (isInitialLoad) {
+      setState({ requestStatus: "error", isRefreshing: false });
+    } else {
+      setState({ isRefreshing: false });
+      showRefreshStatus(message, 4000);
+    }
+
+  } finally {
+    window.clearTimeout(timeoutID);
+    if (activeController === controller) {
+      activeController = null;
+    }
   }
 }
 
-function updateView() {
-  const filteredServices = filterServices(allServices, searchTerm, selectedStatus);
+const tryAgainButton = document.getElementById("tryAgainButton");
+tryAgainButton.addEventListener("click", () => {
+  loadServices({ isInitialLoad: true });
+});
 
-  renderSearchResultMessage(filteredServices.length, allServices.length);
-  renderServiceTable(filteredServices);
-}
+const refreshButton = document.getElementById("refreshButton");
+refreshButton.addEventListener("click", function () {
+  loadServices({ isInitialLoad: false });
+});
 
 const searchInput = document.getElementById("searchInput");
-
 searchInput.addEventListener("input", (event) => {
-  searchTerm = event.target.value;
-  updateView();
+  setState({ searchTerm: event.target.value });
 });
 
 document.querySelectorAll('input[name="status"]').forEach((radio) => {
   radio.addEventListener("change", (event) => {
-    selectedStatus = event.target.value;
-    updateView();
+    setState({ selectedStatus: event.target.value });
   });
 });
+
+loadServices({ isInitialLoad: true });

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/styles.css" />
     <meta name="description" content="CrisisWatch demonstrates asynchronous data loading, validation, error handling, and responsive UI rendering with vanilla JavaScript." />
+    <link rel="icon" type="image/png" href="./images/favicon.png" />
     <title>CRISISWATCH</title>
   </head>
 
@@ -13,11 +14,27 @@
       <div class="head-container">
         <h1>CRISISWATCH</h1>
         <div class="head-subcontainer">
-          <p class="subcontainer-one"></p>
-          <p class="lastUpdateText" id="latestUpdateNote">Last updated: --</p>
+          <a class="demoEntryLink" href="?demo=critical">Demo Mode</a>
+          <button type="button" class="refreshButton" id="refreshButton" disabled>Refresh Services</button>
+          <p class="lastUpdateText" >Data Fetched: <time id="fetchedAtTime">--</time></p>
         </div>
       </div>
     </header>
+
+    <aside class="demo-banner" id="demoBanner" role="status" hidden>
+      <strong>Demo Scenarios</strong>
+
+      <span >Simulated status: <span id="demoScenarioLabel"></span></span>
+
+      <nav class="demoScenarioLinks" aria-label="Demo Scenario Links">
+        <a href="?demo=operational">Operational</a>
+        <a href="?demo=degraded">Degraded</a>
+        <a href="?demo=critical">Critical</a>
+        <a href="?demo=empty">Empty</a>
+        <a href="?demo=error">Error</a>
+      </nav>
+      <a href="./">Return to Live Data</a>
+    </aside>
 
     <main>
       <div>
@@ -107,7 +124,7 @@
         <p id="searchResultMessage"></p>
       </div>
 
-      <div id="tableWrapper" class="overflow" tabindex="0" role="region" aria-label="Service overview">
+      <div id="tableWrapper" class="overflow" tabindex="0" role="region" aria-label="Service overview" hidden>
         <table id="overviewTable" class="overviewTable">
           <caption class="sr-only">
             Service overview Table
@@ -118,13 +135,15 @@
               <th scope="col">Status</th>
               <th scope="col">Response Time</th>
               <th scope="col">Performance</th>
-              <th scope="col">Last updated</th>
+              <th scope="col">Component updated</th>
             </tr>
           </thead>
           <tbody id="serviceTable"></tbody>
         </table>
       </div>
     </main>
+
+    <p id="refreshStatus" class="toast" role="status" aria-live="polite" hidden></p>
 
     <script type="module" src="js/app.js"></script>
   </body>

@@ -40,19 +40,73 @@ function isValidService(service) {
   );
 }
 
+
+export function createDemoServices(services, scenario) {
+if (scenario === "operational") {
+    return services.map((service) => ({ ...service, status: "operational", responseTime: service.responseTime ?? 150,}));
+  }
+
+  if (scenario === "degraded") {
+    return services.map((service) => {
+      if (service.status !== "outage") {
+        return {...service};
+      }
+
+      return {...service, status: "operational", responseTime: 180,};
+    });
+  }
+
+  if (scenario === "critical") {
+    return services.map((service) => ({...service}));
+  }
+
+  if (scenario === "empty") {
+    return [];
+  }
+
+  throw new Error("Unknown Demo Scenario");
+}
+
+export async function fetchDemoServices(scenario, {signal} = {}) {
+  if (scenario === "error") {
+    throw new Error("Simulated Demo error.");
+  }
+
+  const response = await fetch("./data/services.json", { signal, cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error("Demo services could not be loaded.");
+  }
+
+  const baseServices = await response.json();
+
+  if (!isValidServices(baseServices)) {
+    throw new Error("Demo service data has an invalid format.");
+  }
+
+  const demoServices = createDemoServices(baseServices, scenario);
+
+  if (!isValidServices(demoServices)) {
+    throw new Error("Demo service data has an invalid format.");
+  }
+
+  return demoServices;
+}
+
+
 function isValidServices(services) {
   return Array.isArray(services) && services.every(isValidService) && new Set(services.map((service) => service.id)).size === services.length;
 }
 
-export async function fetchServices() {
-  const response = await fetch("https://www.githubstatus.com/api/v2/summary.json");
+export async function fetchServices({ signal } = {}) {
+
+  const response = await fetch("https://www.githubstatus.com/api/v2/summary.json", { signal, cache: "no-store" });
 
   if (!response.ok) {
     throw new Error("Services could not be loaded.");
   }
 
   const apiData = await response.json();
-
   if (!apiData || !Array.isArray(apiData.components)) {
     throw new Error("Service data has an invalid format.");
   }
